@@ -1,0 +1,82 @@
+<!-- Code smell: Poor HTML structure with no semantic elements -->
+<div class="todo-container">
+  <h1>Todo List</h1>
+  
+  <!-- Code smell: Inline styles instead of proper CSS classes -->
+  <div style="margin-bottom: 20px; display: flex;">
+    <!-- Code smell: No label for accessibility -->
+    <input 
+      type="text" 
+      [(ngModel)]="inputVal" 
+      placeholder="Add new todo" 
+      style="padding: 8px; width: 70%;"
+      (keyup.enter)="doAddItem()"
+    />
+    <!-- Code smell: Multiple event handlers on button -->
+    <button 
+      (click)="doAddItem()" 
+      (keydown.enter)="doAddItem()" 
+      style="padding: 8px; background-color: blue; color: white; border: none; margin-left: 10px;">
+      Add
+    </button>
+  </div>
+  
+  <!-- Code smell: No empty state handling -->
+  <ul style="list-style-type: none; padding: 0;">
+    <!-- Code smell: Complex template with too much logic -->
+    <li *ngFor="let item of itemsList" 
+        style="display: flex; align-items: center; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd;">
+      
+      <!-- Code smell: Repeating the same condition check multiple times -->
+      <div *ngIf="editing && editing.id === item.id" style="display: flex; width: 100%;">
+        <input 
+          type="text" 
+          [(ngModel)]="editValue" 
+          style="flex-grow: 1; padding: 8px;"
+        />
+        <button (click)="saveEditItem()" style="margin-left: 5px; background-color: green; color: white; border: none;">Save</button>
+        <button (click)="cancelEdit()" style="margin-left: 5px; background-color: gray; color: white; border: none;">Cancel</button>
+      </div>
+      
+      <!-- Code smell: Duplicate elements and styling for non-edit mode -->
+      <div *ngIf="!editing || editing.id !== item.id" style="display: flex; width: 100%; align-items: center;">
+        <!-- Code smell: Checkbox without label -->
+        <input 
+          type="checkbox" 
+          [checked]="item.completed" 
+          (change)="checkItem(item)"
+        />
+        
+        <!-- Code smell: Inline style manipulation -->
+        <span 
+          [style.text-decoration]="item.completed ? 'line-through' : 'none'"
+          style="margin-left: 10px; flex-grow: 1;"
+        >
+          {{ item.text }}
+        </span>
+        
+        <!-- Code smell: Multiple similar buttons -->
+        <button 
+          (click)="startEdit(item)" 
+          style="margin-left: 5px; background-color: orange; color: white; border: none;">
+          Edit
+        </button>
+        <button 
+          (click)="removeItem(item.id)" 
+          style="margin-left: 5px; background-color: red; color: white; border: none;">
+          Delete
+        </button>
+      </div>
+    </li>
+  </ul>
+  
+  <!-- Code smell: Dead UI elements calling unused functions -->
+  <div style="margin-top: 20px;">
+    <span>{{ getCompletedCount() }} completed</span>
+    <button 
+      (click)="clearCompletedItems()" 
+      style="margin-left: 10px; background-color: gray; color: white; border: none;">
+      Clear completed
+    </button>
+  </div>
+</div>

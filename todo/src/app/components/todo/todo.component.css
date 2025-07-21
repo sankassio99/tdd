@@ -1,0 +1,44 @@
+/* Code smell: Poor class naming */
+.todo-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Code smell: Unused CSS rules */
+.item-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Code smell: Overly specific selectors */
+div.todo-container > ul > li > div > span {
+  font-size: 16px;
+}
+
+/* Code smell: !important usage */
+.completed {
+  text-decoration: line-through !important;
+}
+
+/* Code smell: Hard-coded colors instead of variables */
+.delete-btn {
+  background-color: #ff0000;
+  color: #ffffff;
+}
+
+/* Code smell: Duplicate rules */
+.add-button {
+  padding: 8px;
+  background-color: blue;
+  color: white;
+  border: none;
+  margin-left: 10px;
+}
+
+/* Code smell: Unnecessary media queries */
+@media (max-width: 9999px) {
+  .todo-container {
+    padding: 20px;
+  }
+}
