@@ -50,7 +50,7 @@ export class TodoComponent implements OnInit {
   editValue: string = ''; // Code smell: Multiple variables tracking similar state
 
   // Code smell: Direct instantiation instead of dependency injection
-  private todoSrv = new TodoService();
+  private todoService = new TodoService();
 
   // Dead code: Unused variables
   private lastAction: string = '';
@@ -69,7 +69,7 @@ export class TodoComponent implements OnInit {
 
   // Code smell: Poor function naming
   fetchData() {
-    this.itemsList = this.todoSrv.getData();
+    this.itemsList = this.todoService.getData();
   }
 
   // Code smell: Function doing too many things (breaking SRP)
@@ -83,7 +83,7 @@ export class TodoComponent implements OnInit {
 
     this.inputVal = '';
 
-    this.todoSrv.saveData(this.itemsList);
+    this.todoService.saveData(this.itemsList);
   }
 
   // Code smell: Very similar to doAddItem, breaking DRY
@@ -94,7 +94,7 @@ export class TodoComponent implements OnInit {
     const idx = this.itemsList.findIndex(i => i.id === this.editing?.id);
     if (idx !== -1) {
       this.itemsList[idx].text = this.editValue;
-      this.todoSrv.saveData(this.itemsList); // Duplicated saving logic
+      this.todoService.saveData(this.itemsList); // Duplicated saving logic
     }
 
     this.editing = null;
@@ -110,7 +110,7 @@ export class TodoComponent implements OnInit {
     item.completed = !item.completed;
 
     // Code smell: Direct service call for every small change
-    this.todoSrv.saveData(this.itemsList);
+    this.todoService.saveData(this.itemsList);
 
     // Dead code
     this.lastAction = 'check';
@@ -119,7 +119,7 @@ export class TodoComponent implements OnInit {
   removeItem(id: number) {
     this.itemsList = this.itemsList.filter(i => i.id !== id);
 
-    this.todoSrv.saveData(this.itemsList);
+    this.todoService.saveData(this.itemsList);
   }
 
   // Code smell: Function only setting up state, should be combined with saveEditItem
@@ -149,6 +149,6 @@ export class TodoComponent implements OnInit {
   // Dead code: This function is never used
   clearCompletedItems(): void {
     this.itemsList = this.itemsList.filter(i => !i.completed);
-    this.todoSrv.saveData(this.itemsList);
+    this.todoService.saveData(this.itemsList);
   }
 }
