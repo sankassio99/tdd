@@ -46,4 +46,30 @@ describe('TodoComponent', () => {
     expect(component.itemsList.length).toBe(1);
     expect(component.itemsList[0].text).toBe(title);
   })
+
+  it('should remove item', () => {
+    // Arrange
+    addItem(fixture, 'Item to remove');
+    expect(component.itemsList.length).toBe(1);
+    const button = fixture.nativeElement.querySelector('[test-id="remove-button"]');
+
+    // Act
+    button.click();
+    fixture.detectChanges();
+
+    // Assert
+    expect(component.itemsList.length).toBe(0);
+  });
 });
+
+
+function addItem(fixture: ComponentFixture<TodoComponent>, title: string) {
+  const button = fixture.nativeElement.querySelector('[test-id="add-button"]');
+  const input = fixture.nativeElement.querySelector('input[type="text"]');
+
+  input.value = title;
+  input.dispatchEvent(new Event('input'));
+
+  button.click();
+  fixture.detectChanges();
+}
