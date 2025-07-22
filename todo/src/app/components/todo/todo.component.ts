@@ -21,6 +21,20 @@ class TodoService {
   }
 }
 
+export class TodoItem {
+  id: number;
+  text: string;
+  completed: boolean;
+  createdAt: Date;
+
+  constructor(id: number, text: string) {
+    this.id = id;
+    this.text = text;
+    this.completed = false;
+    this.createdAt = new Date();
+  }
+}
+
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
@@ -30,9 +44,9 @@ class TodoService {
 })
 export class TodoComponent implements OnInit {
   // Code smell: Using any type instead of proper interfaces
-  itemsList: any[] = []; // Bad naming
+  itemsList: TodoItem[] = []; // Bad naming
   inputVal: string = ''; // Bad naming
-  editing: any = null;
+  editing: TodoItem | null = null;
   editValue: string = ''; // Code smell: Multiple variables tracking similar state
 
   // Code smell: Direct instantiation instead of dependency injection
@@ -63,18 +77,13 @@ export class TodoComponent implements OnInit {
     if (!this.inputVal.trim()) return;
 
     // Code smell: Duplicate object creation pattern that appears elsewhere
-    this.itemsList.push({
-      id: Date.now(), // Poor practice: Using timestamp as ID
-      text: this.inputVal,
-      completed: false,
-      createdAt: new Date() // Unused property
-    });
+    const item = new TodoItem(Date.now(), this.inputVal);
+
+    this.itemsList.push(item);
 
     this.inputVal = '';
-    this.todoSrv.saveData(this.itemsList); // Direct service call
 
-    // Dead code
-    this.lastAction = 'add';
+    this.todoSrv.saveData(this.itemsList);
   }
 
   // Code smell: Very similar to doAddItem, breaking DRY
@@ -82,7 +91,7 @@ export class TodoComponent implements OnInit {
     if (!this.editing || !this.editValue.trim()) return;
 
     // Code smell: Finding item in array appears in multiple functions
-    const idx = this.itemsList.findIndex(i => i.id === this.editing.id);
+    const idx = this.itemsList.findIndex(i => i.id === this.editing?.id);
     if (idx !== -1) {
       this.itemsList[idx].text = this.editValue;
       this.todoSrv.saveData(this.itemsList); // Duplicated saving logic
