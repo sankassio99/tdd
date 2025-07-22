@@ -65,3 +65,153 @@ Unnecessary Media Queries:
 
 Media query with an absurd breakpoint
 This implementation demonstrates many code smells while still being functional, making it a good example for learning TDD principles and code improvement techniques.
+
+```
+  describe('saveEditItem', () => {
+    beforeEach(() => {
+      // Setup test data
+      component.itemsList = [
+        { id: 1, text: 'First item', completed: false, createdAt: new Date() },
+        { id: 2, text: 'Second item', completed: true, createdAt: new Date() },
+        { id: 3, text: 'Third item', completed: false, createdAt: new Date() }
+      ];
+    });
+
+    it('should update item text when editing is valid', () => {
+      // Arrange
+      const itemToEdit = component.itemsList[0];
+      component.editing = itemToEdit;
+      component.editValue = 'Updated first item';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList[0].text).toBe('Updated first item');
+      expect(component['todoSrv'].saveData).toHaveBeenCalledWith(component.itemsList);
+      expect(component.editing).toBeNull();
+      expect(component.editValue).toBe('');
+    });
+
+    it('should not update item when editing is null', () => {
+      // Arrange
+      const originalItems = [...component.itemsList];
+      component.editing = null;
+      component.editValue = 'Some text';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList).toEqual(originalItems);
+      expect(component['todoSrv'].saveData).not.toHaveBeenCalled();
+    });
+
+    it('should not update item when editValue is empty', () => {
+      // Arrange
+      const originalItems = [...component.itemsList];
+      component.editing = component.itemsList[0];
+      component.editValue = '';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList).toEqual(originalItems);
+      expect(component['todoSrv'].saveData).not.toHaveBeenCalled();
+    });
+
+    it('should not update item when editValue contains only whitespace', () => {
+      // Arrange
+      const originalItems = [...component.itemsList];
+      component.editing = component.itemsList[0];
+      component.editValue = '   ';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList).toEqual(originalItems);
+      expect(component['todoSrv'].saveData).not.toHaveBeenCalled();
+    });
+
+    it('should handle case when item to edit is not found in list', () => {
+      // Arrange
+      const originalItems = [...component.itemsList];
+      component.editing = { id: 999, text: 'Non-existent item', completed: false, createdAt: new Date() };
+      component.editValue = 'Updated text';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList).toEqual(originalItems);
+      expect(component['todoSrv'].saveData).not.toHaveBeenCalled();
+      expect(component.editing).toBeNull();
+      expect(component.editValue).toBe('');
+    });
+
+    it('should clear editing state even when item is not found', () => {
+      // Arrange
+      component.editing = { id: 999, text: 'Non-existent item', completed: false, createdAt: new Date() };
+      component.editValue = 'Updated text';
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.editing).toBeNull();
+      expect(component.editValue).toBe('');
+    });
+
+    it('should trim whitespace from editValue before saving', () => {
+      // Arrange
+      const itemToEdit = component.itemsList[1];
+      component.editing = itemToEdit;
+      component.editValue = '  Updated second item  ';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList[1].text).toBe('  Updated second item  ');
+      expect(component['todoSrv'].saveData).toHaveBeenCalledWith(component.itemsList);
+    });
+
+    it('should update the correct item when multiple items exist', () => {
+      // Arrange
+      const itemToEdit = component.itemsList[2]; // Third item
+      component.editing = itemToEdit;
+      component.editValue = 'Updated third item';
+      spyOn(component['todoSrv'], 'saveData');
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component.itemsList[0].text).toBe('First item'); // Unchanged
+      expect(component.itemsList[1].text).toBe('Second item'); // Unchanged
+      expect(component.itemsList[2].text).toBe('Updated third item'); // Changed
+      expect(component['todoSrv'].saveData).toHaveBeenCalledWith(component.itemsList);
+    });
+
+    it('should set lastAction to "edit" after successful save', () => {
+      // Arrange
+      const itemToEdit = component.itemsList[0];
+      component.editing = itemToEdit;
+      component.editValue = 'Updated item';
+
+      // Act
+      component.saveEditItem();
+
+      // Assert
+      expect(component['lastAction']).toBe('edit');
+    });
+  });
+```
