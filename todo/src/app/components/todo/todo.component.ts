@@ -107,16 +107,8 @@ export class TodoComponent implements OnInit {
     this.lastAction = 'check';
   }
 
-  // Another function to remove an item
   removeItem(id: number) {
-    // Code smell: Inefficient filtering operation
-    this.itemsList = this.itemsList.filter(i => i.id !== id);
-
-    // Code smell: Direct service call for every small change
-    this.todoSrv.saveData(this.itemsList);
-
-    // Dead code
-    this.lastAction = 'remove';
+    throw new Error('removeItem is not implemented yet'); // Code smell: Placeholder function
   }
 
   // Code smell: Function only setting up state, should be combined with saveEditItem
