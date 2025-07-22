@@ -27,4 +27,23 @@ describe('TodoComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should add item when click on add button', () => {
+    // Arrange
+    const title = 'New Todo Item';
+
+    const addButton = fixture.nativeElement.querySelector('[test-id="add-button"]');
+
+    const input = fixture.nativeElement.querySelector('input[type="text"]');
+
+    // Act
+    input.value = title;
+    input.dispatchEvent(new Event('input'));
+
+    addButton.click();
+
+    // Assert
+    expect(component.itemsList.length).toBe(1);
+    expect(component.itemsList[0].text).toBe(title);
+  })
 });
