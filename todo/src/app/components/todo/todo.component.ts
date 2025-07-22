@@ -117,7 +117,9 @@ export class TodoComponent implements OnInit {
   }
 
   removeItem(id: number) {
-    throw new Error('removeItem is not implemented yet'); // Code smell: Placeholder function
+    this.itemsList = this.itemsList.filter(i => i.id !== id);
+
+    this.todoSrv.saveData(this.itemsList);
   }
 
   // Code smell: Function only setting up state, should be combined with saveEditItem
