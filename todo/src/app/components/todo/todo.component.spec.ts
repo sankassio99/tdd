@@ -18,6 +18,7 @@ describe('TodoComponent', () => {
   });
 
   beforeEach(() => {
+    localStorage.clear(); // Clear localStorage before each test
     fixture = TestBed.createComponent(TodoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
